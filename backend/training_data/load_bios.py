@@ -21,10 +21,12 @@ if __name__ == "__main__":
 		mdbs[name] = party
 		url = root.find("mdbInfo").find("mdbHomepageURL").text
 		if url != None and "twitter" in url:
+			print(name)
 			create(party, url)
 		for child in root.find("mdbInfo").find("mdbSonstigeWebsites").findall("mdbSonstigeWebsite"):
 			url = child.find("mdbSonstigeWebsiteURL").text
 			if "twitter" in url:
+				print(name)
 				create(party, url)
 
 	f = open("mdbs.json", "w")
