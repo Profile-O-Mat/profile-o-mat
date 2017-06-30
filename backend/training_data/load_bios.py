@@ -20,4 +20,3 @@ for filename in os.listdir("mdbs"):
 		url = child.find("mdbSonstigeWebsiteURL").text
 		if "twitter" in url:
 			create(party, url)
-	##o.close() you know...
