@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700');
+
+html, body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #fff;
+  color: #444;
+  margin: 0;
+  padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 100;
+}
+p {
+  margin: 0;
+  font-weight: 300;
+}
+section {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.btn {
+  background-color: #4CAF50;
+  text-decoration: none;
+  color: #fff;
+  padding: 10px;
+  display: inline-block;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+}
+.btn:hover {
+  background-color: #43A047;
+}
+.sec1 > h1 {
+  font-size: 300%;
+}
+.sec2 {
+  background-color: #F1F1F1;
+}
+.sec3 > img {
+  margin-bottom: 10px;
+}
+input[type="text"] {
+  border: none;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  background-color: #fff;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+}
+input[type="text"]:focus {
+  border-bottom: 1px solid #4CAF50;
+}
+input[type="submit"] {
+  border: none;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  border-bottom: 1px solid #4CAF50;
+  transition: all 0.3s;
+  -webkit-transition: all 0.3s;
+}
+input[type="submit"]:hover {
+  border-bottom: 1px solid #43A047;
+  background-color: #43A047;
+}
