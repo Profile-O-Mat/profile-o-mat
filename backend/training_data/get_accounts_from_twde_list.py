@@ -17,12 +17,15 @@ with open("mdbs.json", 'r') as f:
 parties = ('CDU', 'CSU', 'Die Linke', 'SPD', 'Bündnis 90\\Die Grünen', 'fraktionslos')
 
 for s in statuses:
-    print(s.screen_name, s.name, "\n", s.description)
-    print(parties)
+    party = ""
+    print(s.screen_name, s.name)
     for key in mdbs.keys():
-        if s.name in key:
+        if key in s.name or s.name in key:
             party = mdbs[key]
     if not party:
-        i = int(input("Party: "))
-        party = parties[i]
+        print("skipped " + s.name)
+        continue
+        # i = int(input("Party: "))
+        # party = parties[i]
+    print(party)
     create(party, "https://twitter.com/"+s.screen_name)
