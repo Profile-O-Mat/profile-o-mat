@@ -2,7 +2,10 @@ import numpy as np
 import random
 import os
 
-DATA_SIZE = 15000
+DATA_SIZE = 10000
+ITERATIONS = 200
+ALPHA = 2e-6
+LAYER = (50000, 10000)
 
 tweetfraction = []
 tweetcontent = []
@@ -22,11 +25,11 @@ for fraction in os.listdir("../training_data/" + "partys/"):
 print("Finished reading")
 
 # shuffle data
-shuffler = list(zip(tweetfraction, tweetcontent))
-random.shuffle(shuffler)
-tweetfraction, tweetcontent = zip(*shuffler)
+#shuffler = list(zip(tweetfraction, tweetcontent))
+#random.shuffle(shuffler)
+#tweetfraction, tweetcontent = zip(*shuffler)
 
-# pick first 10.000 tweets 
+# pick first DATA_SIZE tweets 
 tweetfraction = tweetfraction[0:DATA_SIZE]
 tweetcontent = tweetcontent[0:DATA_SIZE]
 
@@ -72,13 +75,19 @@ for i in range(0, DATA_SIZE-1):
 print("Data is ready!")
 
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.33, random_state=42)
 
 print("Creating ANN...")
-clf = MLPClassifier(solver='lbfgs', activation='tanh', alpha=1e-5, hidden_layer_sizes=(), random_state=1, max_iter=200, verbose=True)
+clf = MLPClassifier(solver='lbfgs', activation='tanh', alpha=ALPHA, hidden_layer_sizes=LAYER, random_state=1, max_iter=ITERATIONS, verbose=True)
 
-print("Training ANN (max. 200 itr.)...")
-clf.fit(features, labels)
+print("Training ANN (max. " + str(ITERATIONS) + " itr.)...")
+clf.fit(X_train, y_train)
 
+predictions = clf.predict(X_test)
+error = np.mean( predictions != y_test )
 
+print("Test error: " + str(error))
 
-print("EOF.")
+print("EOF!")
