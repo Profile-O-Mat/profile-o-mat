@@ -1,5 +1,6 @@
 import sys
 import pickle
+import json
 
 if (len(sys.argv) != 2):
 	print('Illigal arguments!')
@@ -26,12 +27,15 @@ print(" -> Fractions")
 with open("export_fractions.dat", "rb") as handle:
 	fractions = pickle.load(handle)
 
+print("===JSON===")
+
 ## Predict
 features = count.transform({tweet}).toarray()
 prediction = clf.predict_proba(features)
 
-print(fractions)
-print(clf.classes_)
-print(prediction)
+for key, value in fractions.items():
+	for i in range(0, len(clf.classes_) - 1 + 1): #range is exclusive upper bound
+		if clf.classes_[i] == value:
+			fractions[key] = prediction[0][i]
 
-print("EOF!")
+print(json.dumps(fractions))
