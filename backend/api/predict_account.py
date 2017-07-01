@@ -5,19 +5,13 @@ import statistics
 import json
 from twitter import *
 
-import importlib.util
-spec = importlib.util.spec_from_file_location("predict", "../training/predict.py")
-predict = importlib.util.module_from_spec(spec)
-d = os.getcwd()
-os.chdir("../training/")
-spec.loader.exec_module(predict)
-os.chdir(d)
+import predict
 
 api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKEN_SECRET'], os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']))
 
 def predict_party(twitter_handle):
     predictions = {}
-    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=100)
+    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=200)
     for status in statuses:
         prediction = predict.predict(status["text"])
 
