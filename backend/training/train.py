@@ -2,6 +2,8 @@ import numpy as np
 import random
 import os
 
+DATA_SIZE = 15000
+
 tweetfraction = []
 tweetcontent = []
 # tweets = np.empty((0,2))
@@ -25,8 +27,8 @@ random.shuffle(shuffler)
 tweetfraction, tweetcontent = zip(*shuffler)
 
 # pick first 10.000 tweets 
-tweetfraction = tweetfraction[0:10000]
-tweetcontent = tweetcontent[0:10000]
+tweetfraction = tweetfraction[0:DATA_SIZE]
+tweetcontent = tweetcontent[0:DATA_SIZE]
 
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -52,7 +54,7 @@ print("Got " + str(len(labels)) + " labels")
 print("Got " + str(len(features[0])) + " units long word bag")
 
 # Check for consistent map [DEBUG]
-for i in range(0, 10000-1):
+for i in range(0, DATA_SIZE-1):
 	if( len(features[i]) != len(features[0]) ):
 		print("FATAL: Incosistent dimension!")
 
@@ -72,12 +74,11 @@ print("Data is ready!")
 from sklearn.neural_network import MLPClassifier
 
 print("Creating ANN...")
-clf = MLPClassifier(solver='lbfgs', activation='tanh', alpha=1e-5, hidden_layer_sizes=(5, 5), random_state=1, max_iter=200, verbose=True)
+clf = MLPClassifier(solver='lbfgs', activation='tanh', alpha=1e-5, hidden_layer_sizes=(), random_state=1, max_iter=200, verbose=True)
 
 print("Training ANN (max. 200 itr.)...")
 clf.fit(features, labels)
-#testdata = count.transform(["ich mag keine Autos", "ich mag Autos", "ich mag Himmel", "Anna mag keine Himmel",
-#                            "ich mag keine Himmel"]).toarray()
-#prediction = clf.predict(testdata)
+
+
 
 print("EOF.")
