@@ -102,4 +102,8 @@ print(" -> MLPClassifier")
 with open("export_clf.dat", "wb+") as handle:
 	pickle.dump(clf, handle)
 
+print(" -> Fractions")
+with open("export_fractions.dat", "wb+") as handle:
+	pickle.dump(fractions, handle)
+
 print("EOF!")
