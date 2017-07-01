@@ -1,11 +1,12 @@
 import numpy as np
-
+import random
 import os
 
 tweetfraction = []
 tweetcontent = []
 # tweets = np.empty((0,2))
 
+# read files
 for fraction in os.listdir("../training_data/" + "partys/"):
     for account in os.listdir("../training_data/" + "partys/" + fraction):
         for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
@@ -18,20 +19,29 @@ for fraction in os.listdir("../training_data/" + "partys/"):
 
 print("Finished reading")
 
+# shuffle data
+shuffler = list(zip(tweetfraction, tweetcontent))
+random.shuffle(shuffler)
+tweetfraction, tweetcontent = zip(*shuffler)
+
+# pick first 10.000 tweets 
+tweetfraction = tweetfraction[0:10000]
+tweetcontent = tweetcontent[0:10000]
+
 from sklearn.feature_extraction.text import CountVectorizer
 
+# Create Bag-Of-Words
 count = CountVectorizer()
-data = np.asarray(tweetcontent)[1:5000]
+data = np.asarray(tweetcontent)
 features = count.fit_transform(data).toarray()
-del data
 
+# todo create labels from tweetfraction
 labels = np.array([
     1,
     0,
     1,
     1
 ])
-
 
 ##pickle: save python object to file
 
