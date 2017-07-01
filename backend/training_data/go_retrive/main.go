@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 	"io/ioutil"
@@ -26,8 +27,8 @@ func tweetLookup(c *twitter.Client, wg *sync.WaitGroup, u string, p string) {
 func main() {
 	fmt.Println("Hello")
 
-	config := oauth1.NewConfig("EOrXKkxg0XzFzlFOTA3jDAs4f", "MOpd38qVPPL2okboPfRh8zydfLRFmy3mulB5LhQv1xKKsfMHRh")
-	token := oauth1.NewToken("388252133-aVIPGzoy8D19TP4QdBBhV0zlOMlmwcoSOt760KRs", "obs8ggbMMlULwijO3PCAhqDRn8joUssOEsaQHyi5uF10r")
+	config := oauth1.NewConfig(os.Getenv("CONSUMER_KEY"), os.Getenv("CONSUMER_SECRET"))
+	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN_KEY"), os.Getenv("ACCESS_TOKEN_SECRET"))
 	httpClient := config.Client(oauth1.NoContext, token)
 	wg := sync.WaitGroup{}
 	// Twitter client
