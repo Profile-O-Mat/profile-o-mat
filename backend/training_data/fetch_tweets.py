@@ -12,4 +12,4 @@ for fraction in os.listdir("partys/"):
 	for account in os.listdir("partys/" + fraction):
 		statuses = api.GetUserTimeline(screen_name=account)
 		for status in statuses:
-			print(fraction + " " + account + ": " + status.text)
+			print(fraction + " " + account + ": [" + str(status.id) + "] " + status.text + "\n")
