@@ -14,9 +14,9 @@ tweetcontent = []
 # read files
 for fraction in os.listdir("../training_data/" + "partys/"):
     for account in os.listdir("../training_data/" + "partys/" + fraction):
+        print("Reading..." + account)
         for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
             file = open("../training_data/" + "partys/" + fraction + "/" + account + "/" + id, 'r')
-            print("Reading..." + id)
             # tweets = np.append(tweets, [fraction, file.read()])
             tweetfraction.append(fraction)
             tweetcontent.append(file.read())
@@ -30,7 +30,7 @@ shuffler = list(zip(tweetfraction, tweetcontent))
 random.shuffle(shuffler)
 tweetfraction, tweetcontent = zip(*shuffler)
 
-# pick first DATA_SIZE tweets 
+# pick first DATA_SIZE tweets
 tweetfraction = tweetfraction[0:DATA_SIZE]
 tweetcontent = tweetcontent[0:DATA_SIZE]
 
