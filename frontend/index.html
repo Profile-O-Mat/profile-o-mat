@@ -6,24 +6,30 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/animate.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
   <body>
+    <!-- <div class="progress"><div class="bar cdu" style="width:75%;"></div><div class="bar AfD" style="width:10%;"></div></div> -->
+
     <section class="sec1 animated fadeIn">
       <h1>Profile-O-Mat</h1>
       <p style="margin-top:10px;margin-bottom:10px;">Type in a twitter name, and get his political orientation.</p>
-      <a href="#main" class="btn">Let's start</a>
-    </section>
-
-    <section class="sec2" id="main">
       <form>
         <input type="text" placeholder="@Username">
         <input type="submit">
       </form>
     </section>
 
+    <section class="sec2" id="main">
+      <div class="content">
+        <div class="timeline">
+        </div>
+      </div>
+    </section>
+
     <section class="sec3">
       <img src="images/jugendhackt.svg">
-      <p>&copy; 2017 KeineAhnungWasFürEinName - All rights reserved.</p>
+      <p>&copy; 2017 Profile-O-Mat @ <a href="http://jugendhackt.org" target="_blank">Jugend Hackt</a> - All rights reserved.</p>
     </section>
 
     <script src="js/main.js"></script>

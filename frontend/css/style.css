@@ -15,13 +15,12 @@ p {
   margin: 0;
   font-weight: 300;
 }
-section {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+a {
+  text-decoration: none;
+  color: #4CAF50;
+}
+a:hover {
+  text-decoration: underline;
 }
 .btn {
   background-color: #4CAF50;
@@ -35,11 +34,29 @@ section {
 .btn:hover {
   background-color: #43A047;
 }
+.sec1 {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
 .sec1 > h1 {
   font-size: 300%;
 }
 .sec2 {
   background-color: #F1F1F1;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+.sec3 {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 .sec3 > img {
   margin-bottom: 10px;
@@ -49,7 +66,7 @@ input[type="text"] {
   outline: none;
   font-family: 'Roboto', sans-serif;
   font-size: 16px;
-  background-color: #fff;
+  background-color: #f1f1f1;
   padding: 10px;
   border-bottom: 1px solid #ccc;
   transition: all 0.3s;
@@ -74,4 +91,110 @@ input[type="submit"] {
 input[type="submit"]:hover {
   border-bottom: 1px solid #43A047;
   background-color: #43A047;
+}
+.content {
+  margin: auto;
+  max-width: 1400px;
+}
+.timeline {
+  box-shadow: 0px 0px 3px #ccc;
+}
+.tweet {
+  border-top: 1px #f1f1f1 solid;
+  padding: 40px;
+  background-color: #fff;
+}
+.tweet:first-child {
+  border-top: none;
+}
+.tweet-avatar {
+  border: 1px #f1f1f1 solid;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: inline;
+  position: absolute;
+  background-color: #eee;
+}
+.tweet-political-real {
+  border: 1px #f1f1f1 solid;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: inline;
+  position: absolute;
+  margin-left: 60px;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.tweet-political-bot {
+  border: 1px #f1f1f1 solid;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: inline;
+  position: absolute;
+  margin-left: 30px;
+  margin-top: 60px;
+  background-color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.tweet-content {
+  margin-left: 150px;
+}
+.tweet-content > h1 {
+  font-weight: 300;
+  color: #666;
+  margin-top: 0px;
+}
+.tweet-content > h2 {
+  color: #888;
+  font-weight: 300;
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
+.tweet-content > p {
+  font-size: 22px;
+}
+.timestamp {
+  color: #888;
+  margin-top: 10px;
+  font-weight: 700;
+}
+.progress {
+  margin-top: 10px;
+  background-color: #f1f1f1;
+  display: block;
+  height: 20px;
+}
+.bar {
+  background-color: #4CAF50;
+  height: 100%;
+  display: inline-block;
+}
+.red, .CDU, .SPD {
+  background-color: #F44336;
+  color: #fff;
+}
+.black, .linke {
+  background-color: #000;
+  color: #fff;
+}
+.green, .b90 {
+  background-color: #4CAF50;
+  color: #fff;
+}
+.blue, .CSU, .AfD {
+  background-color: #2196F3;
+  color: #fff;
+}
+.blank {
+  background-color: #eee;
+  color: #444;
 }
