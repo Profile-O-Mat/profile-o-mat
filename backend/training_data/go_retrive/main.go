@@ -10,7 +10,10 @@ import (
 
 func tweetLookup(c *twitter.Client, wg *sync.WaitGroup, u string, p string) {
 	user, _, _ := c.Timelines.UserTimeline(&twitter.UserTimelineParams{
-		ScreenName: u,
+		ScreenName:      u,
+		ExcludeReplies:  twitter.Bool(true),
+		IncludeRetweets: twitter.Bool(false),
+		Count:           200,
 	})
 	for t := range user {
 
