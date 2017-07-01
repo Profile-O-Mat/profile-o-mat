@@ -1,11 +1,10 @@
 import os
 import twitter
 
-api = twitter.Api(consumer_key="EOrXKkxg0XzFzlFOTA3jDAs4f",
-                  	consumer_secret='MOpd38qVPPL2okboPfRh8zydfLRFmy3mulB5LhQv1xKKsfMHRh',
-                  	access_token_key="388252133-aVIPGzoy8D19TP4QdBBhV0zlOMlmwcoSOt760KRs",
-                  	access_token_secret="obs8ggbMMlULwijO3PCAhqDRn8joUssOEsaQHyi5uF10r")
-
+api = twitter.Api(consumer_key=os.environ['CONSUMER_KEY'],
+                  consumer_secret=os.environ['CONSUMER_SECRET'],
+                  access_token_key=os.environ['ACCESS_TOKEN_KEY'],
+                  access_token_secret=os.environ['ACCESS_TOKEN_SECRET'])
 
 
 for fraction in os.listdir("partys/"):
@@ -20,4 +19,3 @@ for fraction in os.listdir("partys/"):
 				file.close()
 		except:
 			print("Failed to read profile!")
-			
