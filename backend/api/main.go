@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"encoding/json"
 	"fmt"
 	"github.com/dghubble/go-twitter/twitter"
@@ -31,8 +32,8 @@ var clients []*websocket.Conn
 
 func t_stream(data map[string]string) {
 
-	config := oauth1.NewConfig("GBvHlmhvAhaYrLbaK7iIql9mD", "iftBQQ3LEHwhDwNS5koK6gCi78n1Ak7yvU3DuwZfgoJBHDLV11")
-	token := oauth1.NewToken("881137326726029313-1ZKsBVbZlra9TxjbbOZStjpCX2rFWOJ", "Kj71KOy0XGuktCrR2IJcwhQYBp9gabuxMcChhItdNa5Zu")
+	config := oauth1.NewConfig(os.Getenv("CONSUMER_KEY"), os.Getenv("CONSUMER_SECRET"))
+	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN_KEY"), os.Getenv("ACCESS_TOKEN_SECRET"))
 	// OAuth1 http.Client will automatically authorize Requests
 	httpClient := config.Client(oauth1.NoContext, token)
 
