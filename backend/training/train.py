@@ -67,10 +67,14 @@ for i in range(0, 10000-1):
 # from sklearn import svm
 # clf = svm.SVC(gamma=0.001, C=100.)
 
+print("Data is ready!")
+
 from sklearn.neural_network import MLPClassifier
 
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(8, 7), random_state=1)
+print("Creating ANN...")
+clf = MLPClassifier(solver='lbfgs', activation='tanh', alpha=1e-5, hidden_layer_sizes=(5, 5), random_state=1, max_iter=200, verbose=True)
 
+print("Training ANN (max. 200 itr.)...")
 clf.fit(features, labels)
 #testdata = count.transform(["ich mag keine Autos", "ich mag Autos", "ich mag Himmel", "Anna mag keine Himmel",
 #                            "ich mag keine Himmel"]).toarray()
