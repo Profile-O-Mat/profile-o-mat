@@ -3,7 +3,7 @@ import random
 import os
 
 DATA_SIZE = 10000
-ITERATIONS = 200
+ITERATIONS = 1
 ALPHA = 2e-6
 LAYER = (500, 100)
 

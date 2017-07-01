@@ -15,14 +15,14 @@ parties = ('CDU', 'CSU', 'Die Linke', 'SPD', 'Bündnis 90\\Die Grünen', 'frakti
 
 for s in statuses["users"]:
     party = ""
-    print(s['screen_name'], s['name'])
     for key in mdbs.keys():
         if key in s['screen_name'] or s['name'] in key:
             party = mdbs[key]
     if not party:
+        # print(s['screen_name'], s['name'])
         print("skipped " + s['name'])
         continue
         # i = int(input("Party: "))
         # party = parties[i]
-    print(party)
+    print(s['screen_name'] +  ": " + party)
     create(party, "https://twitter.com/"+s['screen_name'])
