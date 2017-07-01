@@ -35,6 +35,30 @@ count = CountVectorizer()
 data = np.asarray(tweetcontent)
 features = count.fit_transform(data).toarray()
 
+#select unique fractions
+labels = []
+fractionset = set(tweetfraction)
+fractions = dict()
+i = 0
+for fraction in fractionset:
+	fractions.update({fraction: i})
+	i += 1
+
+for fraction in tweetfraction:
+	labels.append(fractions[fraction])
+
+print("Got " + str(len(features)) + " training entrys")
+print("Got " + str(len(labels)) + " labels")
+print("Got " + str(len(features[0])) + " units long word bag")
+
+# Check for consistent map [DEBUG]
+for i in range(0, 10000-1):
+	if( len(features[i]) != len(features[0]) ):
+		print("FATAL: Incosistent dimension!")
+
+#for i in range(0, 10000-1):
+#	labels[i] = 
+
 # todo create labels from tweetfraction
 labels = np.array([
     1,
