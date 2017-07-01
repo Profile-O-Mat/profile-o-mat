@@ -13,3 +13,7 @@ for fraction in os.listdir("partys/"):
 		statuses = api.GetUserTimeline(screen_name=account)
 		for status in statuses:
 			print(fraction + " " + account + ": [" + str(status.id) + "] " + status.text + "\n")
+
+			file = open("partys/" + fraction + "/" + account + "/" + str(status.id) + '.TXT', 'w+')
+			file.write(status.text)
+			file.close()
