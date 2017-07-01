@@ -56,16 +56,6 @@ for i in range(0, 10000-1):
 	if( len(features[i]) != len(features[0]) ):
 		print("FATAL: Incosistent dimension!")
 
-#for i in range(0, 10000-1):
-#	labels[i] = 
-
-# todo create labels from tweetfraction
-labels = np.array([
-    1,
-    0,
-    1,
-    1
-])
 
 ##pickle: save python object to file
 
@@ -82,8 +72,8 @@ from sklearn.neural_network import MLPClassifier
 clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(8, 7), random_state=1)
 
 clf.fit(features, labels)
-testdata = count.transform(["ich mag keine Autos", "ich mag Autos", "ich mag Himmel", "Anna mag keine Himmel",
-                            "ich mag keine Himmel"]).toarray()
-prediction = clf.predict(testdata)
+#testdata = count.transform(["ich mag keine Autos", "ich mag Autos", "ich mag Himmel", "Anna mag keine Himmel",
+#                            "ich mag keine Himmel"]).toarray()
+#prediction = clf.predict(testdata)
 
-print("Hello World")
+print("EOF.")
