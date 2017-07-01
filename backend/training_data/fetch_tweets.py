@@ -10,10 +10,14 @@ api = twitter.Api(consumer_key="EOrXKkxg0XzFzlFOTA3jDAs4f",
 
 for fraction in os.listdir("partys/"):
 	for account in os.listdir("partys/" + fraction):
-		statuses = api.GetUserTimeline(screen_name=account)
-		for status in statuses:
-			print(fraction + " " + account + ": [" + str(status.id) + "] " + status.text + "\n")
+		try:
+			statuses = api.GetUserTimeline(screen_name=account, count=200)
+			for status in statuses:
+				print(fraction + " " + account + ": [" + str(status.id) + "] " + status.text + "\n")
 
-			file = open("partys/" + fraction + "/" + account + "/" + str(status.id) + '.TXT', 'w+')
-			file.write(status.text)
-			file.close()
+				file = open("partys/" + fraction + "/" + account + "/" + str(status.id) + '.TXT', 'w+')
+				file.write(status.text)
+				file.close()
+		except:
+			print("Failed to read profile!")
+			
