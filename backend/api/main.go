@@ -1,7 +1,7 @@
 package main
 
 import (
-	"os"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/dghubble/go-twitter/twitter"
@@ -10,6 +10,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"os/exec"
 )
 
 var upgrader = websocket.Upgrader{
@@ -43,6 +45,15 @@ func t_stream(data map[string]string) {
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
+		cmd := exec.Command("python", "../training/predict.py", "\""+tweet.Text+"\"")
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println(out.String())
+			log.Fatal(err)
+		}
+
 		msg := ws_msg{
 			Profile_img:  tweet.User.ProfileImageURL,
 			Name:         tweet.User.Name,
@@ -50,7 +61,7 @@ func t_stream(data map[string]string) {
 			Text:         tweet.Text,
 			Date:         tweet.CreatedAt,
 			RealParty:    data[tweet.User.ScreenName],
-			GuessedParty: "blank",
+			GuessedParty: out.String(),
 		}
 
 		fmt.Println("Raw Struct", msg)
