@@ -5,7 +5,7 @@ import os
 DATA_SIZE = 10000
 ITERATIONS = 200
 ALPHA = 2e-6
-LAYER = (50000, 10000)
+LAYER = (500, 100)
 
 tweetfraction = []
 tweetcontent = []
@@ -25,9 +25,9 @@ for fraction in os.listdir("../training_data/" + "partys/"):
 print("Finished reading")
 
 # shuffle data
-#shuffler = list(zip(tweetfraction, tweetcontent))
-#random.shuffle(shuffler)
-#tweetfraction, tweetcontent = zip(*shuffler)
+shuffler = list(zip(tweetfraction, tweetcontent))
+random.shuffle(shuffler)
+tweetfraction, tweetcontent = zip(*shuffler)
 
 # pick first DATA_SIZE tweets 
 tweetfraction = tweetfraction[0:DATA_SIZE]
@@ -89,5 +89,17 @@ predictions = clf.predict(X_test)
 error = np.mean( predictions != y_test )
 
 print("Test error: " + str(error))
+
+print("Exporting data structures:")
+
+import pickle
+
+print(" -> CountVectorizer")
+with open("export_count.dat", "wb+") as handle:
+	pickle.dump(count, handle)
+
+print(" -> MLPClassifier")
+with open("export_clf.dat", "wb+") as handle:
+	pickle.dump(clf, handle)
 
 print("EOF!")
