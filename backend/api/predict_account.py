@@ -5,20 +5,22 @@ import statistics
 import json
 from twitter import *
 
+import importlib.util
+spec = importlib.util.spec_from_file_location("predict", "../training/predict.py")
+predict = importlib.util.module_from_spec(spec)
+d = os.getcwd()
+os.chdir("../training/")
+spec.loader.exec_module(predict)
+os.chdir(d)
+
 api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKEN_SECRET'], os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']))
 
 def predict_party(twitter_handle):
     predictions = {}
-    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=10)
+    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=100)
     for status in statuses:
-        wd = os.getcwd()
-        os.chdir("../training")
-        j = str(subprocess.check_output(["python3", "./predict.py", str(status["text"])]))
-        j = j.split("===JSON===")[-1][:-1]
-        j = j.replace(r"\n", "")
-        print(j)
-        prediction = json.loads(j)
-        os.chdir(wd)
+        prediction = predict.predict(status["text"])
+
         for key, value in prediction.items():
             if key not in predictions.keys():
                 predictions[key] = []
