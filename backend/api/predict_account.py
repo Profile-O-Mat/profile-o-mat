@@ -27,7 +27,7 @@ def predict_party(twitter_handle):
             predictions[key].append(value)
 
     for key, value in predictions.items():
-        print(key, value)
+        # verbose: print(key, value)
         predictions[key] = statistics.mean(value)
     print("=== done ====")
     return predictions
