@@ -3,9 +3,9 @@ import random
 import os
 
 DATA_SIZE = 10000
-ITERATIONS = 1
+ITERATIONS = 500
 ALPHA = 2e-6
-LAYER = (500, 100)
+LAYER = (2000, 500, 100)
 
 tweetfraction = []
 tweetcontent = []
@@ -16,6 +16,7 @@ for fraction in os.listdir("../training_data/" + "partys/"):
     for account in os.listdir("../training_data/" + "partys/" + fraction):
         for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
             file = open("../training_data/" + "partys/" + fraction + "/" + account + "/" + id, 'r')
+            print("Reading..." + id)
             # tweets = np.append(tweets, [fraction, file.read()])
             tweetfraction.append(fraction)
             tweetcontent.append(file.read())
