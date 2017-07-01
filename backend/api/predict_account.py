@@ -17,7 +17,7 @@ api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKE
 
 def predict_party(twitter_handle):
     predictions = {}
-    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=100)
+    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=200)
     for status in statuses:
         prediction = predict.predict(status["text"])
 
