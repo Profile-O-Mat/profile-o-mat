@@ -6,7 +6,7 @@ from load_bios import create
 
 api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKEN_SECRET'], os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']))
 
-statuses = api.lists.members(list_id=67426883)
+statuses = api.lists.members(list_id=67426883, count=1000)
 
 with open("mdbs.json", 'r') as f:
     mdbs = json.load(f)
