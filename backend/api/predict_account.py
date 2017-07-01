@@ -26,7 +26,7 @@ def predict_party(twitter_handle):
 
     for key, value in predictions.items():
         print(key, value)
-        predictions[key] = statistics.median(value)
+        predictions[key] = statistics.mean(value)
     print("=== done ====")
     return predictions
 
