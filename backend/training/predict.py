@@ -30,7 +30,8 @@ with open("export_fractions.dat", "rb") as handle:
 features = count.transform({tweet}).toarray()
 prediction = clf.predict_proba(features)
 
-print(list(fractions.keys()))
+print(fractions)
+print(clf.classes_)
 print(prediction)
 
 print("EOF!")
