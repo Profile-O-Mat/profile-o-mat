@@ -45,7 +45,7 @@ func t_stream(data map[string]string) {
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
-		cmd := exec.Command("python", "../training/predict.py", "\""+tweet.Text+"\"")
+		cmd := exec.Command("python", "predict.py", "\""+tweet.Text+"\"")
 		var out bytes.Buffer
 		cmd.Stdout = &out
 		err := cmd.Run()
@@ -114,5 +114,5 @@ func main() {
 
 	go t_stream(data)
 	http.HandleFunc("/", echo)
-	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))
+	log.Fatal(http.ListenAndServe("127.0.0.1:8000", nil))
 }

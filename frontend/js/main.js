@@ -8,7 +8,7 @@ $(function() {
   t = document.getElementById('timeline')
 
   // Web Socket
-  var ws = new WebSocket("ws://192.168.2.164:8000");
+  var ws = new WebSocket("ws://127.0.0.1:8000");
 
   // Connection bestätigung
   ws.onopen = function(){
