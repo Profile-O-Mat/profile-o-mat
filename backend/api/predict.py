@@ -26,12 +26,13 @@ def predict(tweet):
 	## Predict
 	features = count.transform({tweet}).toarray()
 	prediction = clf.predict_proba(features)
+	results = {}
 
 	for key, value in fractions.items():
 		for i in range(0, len(clf.classes_) - 1 + 1): #range is exclusive upper bound
 			if clf.classes_[i] == value:
-				fractions[key] = prediction[0][i]
-	return fractions
+				results[key] = prediction[0][i]
+	return results
 
 if __name__ == '__main__':
 	if (len(sys.argv) != 2):
