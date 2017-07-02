@@ -3,9 +3,9 @@ import random
 import os
 
 DATA_SIZE = 10000
-ITERATIONS = 500
+ITERATIONS = 1
 ALPHA = 2e-6
-LAYER = (2000, 500, 100)
+LAYER = ()
 
 tweetfraction = []
 tweetcontent = []
