@@ -6,7 +6,7 @@
   crossorigin="anonymous"></script>
 	</head>
 	<body>
-		
+	<p>Loading...</p>
 	<script>
 
 
@@ -23,30 +23,27 @@ function findGetParameter(parameterName) {
     return result;
 }
 
-function erstelleDiagramm() {
+function erstelleDiagramm(values) {
 	border=1;
 	width=50;
 	function bar(high,val){
-	document.write("<td valign=bottom>",high,
-	   "<table bgcolor=#191970 border=",border," height=",high,
-	   " width=",width,
-	   " cellpadding=0 cellspacing=0>",
-	   "<tr><td align=center valign=bottom>",
-	   "<font color=#D4D4D4     size=-1 >",val,"</font>",
-	   "</td></tr></table></td>")
+		document.writeln("<td valign=bottom>",high,
+		   "<table bgcolor=#191970 border=",border," height=",high,
+		   " width=",width,
+		   " cellpadding=0 cellspacing=0>",
+		   "<tr><td align=center valign=bottom>",
+		   "<font color=#D4D4D4     size=-1 >",val,"</font>",
+		   "</td></tr></table></td>")
 	}
 	document.writeln("<table bgcolor=#a0a0a0 height=400 width=",
-	 teilnehmer.length*width," border=",border," >");
+	 500," border=",border," >");
 	 
-	bar(105,1);
-	bar( 11,2);
-	bar(140,3);
-	bar(180,4);
-	bar(245,5);
-	bar(170,6);
-	bar( 88,7);
-	bar( 40,8);
-	bar(150,9);
+	for (key in values)
+	{
+		console.log("adding...")
+		bar(Math.round(values[key]*100, 5), key.replace("Die Linke", "Links"))
+	}
+
 	document.writeln("</table>");
 }
 
@@ -59,6 +56,7 @@ $.ajax({
 }).done(function(html) {
   console.log("GOT RESPONSE");
   console.log(html);
+  erstelleDiagramm(html);
 });
 	</script>		
 	</body>
