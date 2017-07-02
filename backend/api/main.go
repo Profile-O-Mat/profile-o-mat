@@ -74,7 +74,13 @@ func t_stream(data map[string]string) {
 			err := clients[c].WriteMessage(websocket.TextMessage, msg_rdy)
 			if err != nil {
 				fmt.Println("Send error", err)
-				clients = append(clients[:c], clients[c+1:]...)
+				var clients_new []*websocket.Conn
+				for n := range clients {
+					if n != c {
+						clients_new = append(clients_new, clients[n])
+					}
+				}
+				clients = clients_new
 			}
 		}
 
