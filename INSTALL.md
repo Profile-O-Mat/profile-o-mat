@@ -32,10 +32,10 @@ in `backend/training_data` run `fetch_data.sh`. You should get a total of about 
 in `backend/training` run `python train.py`. You can adjust `ITERATIONS` and `LAYER` in this file.
 
 ## Predict a single tweet
-run `python backend/api/predict.py "Text here"`
+in `backend/api/` run `python predict.py "Text here"`
 
 ## Predict based on the last tweets of an acount
-run `python backend/api/predict_account.py accountname`
+in `backend/api/` run `python predict_account.py accountname`
 
 ## Run the backend
 Go stuff, don't ask me
@@ -43,6 +43,6 @@ Go stuff, don't ask me
 ## Run the flask backend
 install python package `flask`
 
-run `python backend/api/main.py`
+in `backend/api/` run `python main.py`
 
 GET request to `localhost:5000/predict?user=twitter_handle`, get back json
