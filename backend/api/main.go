@@ -33,7 +33,7 @@ type ws_msg struct {
 var clients []*websocket.Conn
 
 func t_stream(data map[string]string) {
-
+	fmt.Println(os.Getenv("CONSUMER_KEY"))
 	config := oauth1.NewConfig(os.Getenv("CONSUMER_KEY"), os.Getenv("CONSUMER_SECRET"))
 	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN_KEY"), os.Getenv("ACCESS_TOKEN_SECRET"))
 	// OAuth1 http.Client will automatically authorize Requests
@@ -45,7 +45,7 @@ func t_stream(data map[string]string) {
 	demux := twitter.NewSwitchDemux()
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
-		cmd := exec.Command("python", "predict.py", "\""+tweet.Text+"\"")
+		cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
 		var out bytes.Buffer
 		cmd.Stdout = &out
 		err := cmd.Run()
@@ -120,5 +120,5 @@ func main() {
 
 	go t_stream(data)
 	http.HandleFunc("/", echo)
-	log.Fatal(http.ListenAndServe("127.0.0.1:8000", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:8000", nil))
 }

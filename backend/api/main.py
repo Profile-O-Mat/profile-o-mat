@@ -10,4 +10,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="saturn.maschinen.space", port=8080)
