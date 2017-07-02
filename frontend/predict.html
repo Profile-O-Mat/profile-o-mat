@@ -8,6 +8,58 @@
 	<body>
 		
 	<script>
+
+
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+          tmp = item.split("=");
+          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+        });
+    return result;
+}
+
+function erstelleDiagramm() {
+	border=1;
+	width=50;
+	function bar(high,val){
+	document.write("<td valign=bottom>",high,
+	   "<table bgcolor=#191970 border=",border," height=",high,
+	   " width=",width,
+	   " cellpadding=0 cellspacing=0>",
+	   "<tr><td align=center valign=bottom>",
+	   "<font color=#D4D4D4     size=-1 >",val,"</font>",
+	   "</td></tr></table></td>")
+	}
+	document.writeln("<table bgcolor=#a0a0a0 height=400 width=",
+	 teilnehmer.length*width," border=",border," >");
+	 
+	bar(105,1);
+	bar( 11,2);
+	bar(140,3);
+	bar(180,4);
+	bar(245,5);
+	bar(170,6);
+	bar( 88,7);
+	bar( 40,8);
+	bar(150,9);
+	document.writeln("</table>");
+}
+
+var calling = "http://saturn.maschinen.space:8080/predict?user=" + findGetParameter("name");
+console.log(calling);
+
+$.ajax({
+  url: calling,
+  context: document.body
+}).done(function(html) {
+  console.log("GOT RESPONSE");
+  console.log(html);
+});
 	</script>		
 	</body>
 </html>
