@@ -8,7 +8,7 @@ $(function() {
   t = document.getElementById('timeline')
 
   // Web Socket
-  var ws = new WebSocket("ws://saturn.maschinen.space:8000");
+  var ws = new WebSocket("ws://styx.me:8000");
 
   // Connection bestätigung
   ws.onopen = function(){
