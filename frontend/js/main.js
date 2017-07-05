@@ -8,9 +8,9 @@ $(function() {
   t = document.getElementById('timeline')
 
   // Web Socket
-  var ws = new WebSocket("ws://styx.me:8000");
+  var ws = new WebSocket("wss://styx.me:8010");
 
-  // Connection bestÃ¤tigung
+  // Connection bestätigung
   ws.onopen = function(){
     console.log("Socket has been opened!");
   };
@@ -31,7 +31,7 @@ $(function() {
         lastFac = key
       }
     guessed_faction = lastFac.replace("Die Linke", "linke")
-                             .replace("BÃ¼ndnis 90\\Die GrÃ¼nen", "b90")
+                             .replace("Bündnis 90\\Die Grünen", "b90")
                              .replace("fraktionslos", "erica")
 
     var tweet = '<div class="tweet"><img src="' + message["profile_img"] + 
