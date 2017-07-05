@@ -47,7 +47,7 @@ function erstelleDiagramm(values) {
 	document.writeln("</table>");
 }
 
-var calling = "https://styx.me/Profile-O-Mat/predict?user=" + findGetParameter("name");
+var calling = "http://profile-o-mat.de:8080/predict?user=" + findGetParameter("name");
 console.log(calling);
 
 $.ajax({
