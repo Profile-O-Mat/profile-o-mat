@@ -1,15 +1,32 @@
 <html>
-	<head>
-		<script
-  src="https://code.jquery.com/jquery-3.2.1.min.js"
-  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-  crossorigin="anonymous"></script>
-	</head>
-	<body>
-	<p>Loading...</p>
+<head>
+	<script
+src="https://code.jquery.com/jquery-3.2.1.min.js"
+integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="./css/predict.css">
+</head>
+<body>
+	<div id="chart">
+		<ul id="numbers">
+			<li><span>100%</span></li>
+			<li><span>90%</span></li>
+			<li><span>80%</span></li>
+			<li><span>70%</span></li>
+			<li><span>60%</span></li>
+			<li><span>50%</span></li>
+			<li><span>40%</span></li>
+			<li><span>30%</span></li>
+			<li><span>20%</span></li>
+			<li><span>10%</span></li>
+			<li><span>0%</span></li>
+		</ul>
+
+		<ul id="bars">
+			<p>LOADING...</p>
+		</ul>
+	</div>
 	<script>
-
-
 function findGetParameter(parameterName) {
     var result = null,
         tmp = [];
@@ -23,41 +40,36 @@ function findGetParameter(parameterName) {
     return result;
 }
 
-function erstelleDiagramm(values) {
-	border=1;
-	width=50;
-	function bar(high,val){
-		document.writeln("<td valign=bottom>",high,
-		   "<table bgcolor=#191970 border=",border," height=",high,
-		   " width=",width,
-		   " cellpadding=0 cellspacing=0>",
-		   "<tr><td align=center valign=bottom>",
-		   "<font color=#D4D4D4     size=-1 >",val,"</font>",
-		   "</td></tr></table></td>")
-	}
-	document.writeln("<table bgcolor=#a0a0a0 height=400 width=",
-	 500," border=",border," >");
-	 
-	for (key in values)
-	{
-		console.log("adding...")
-		bar(Math.round(values[key]*100, 5), key.replace("Die Linke", "Links"))
-	}
-
-	document.writeln("</table>");
-}
-
 var calling = "http://profile-o-mat.de:8080/predict?user=" + findGetParameter("name");
 console.log(calling);
 
+var bar = "<li><div data-percentage=\"_PER_\" class=\"bar\"></div><span>_NAM_</span></li>";
+var bar_prob = "_PER_";
+var bar_name = "_NAM_";
 $.ajax({
-  url: calling,
-  context: document.body
-}).done(function(html) {
-  console.log("GOT RESPONSE");
-  console.log(html);
-  erstelleDiagramm(html);
+	url: calling,
+	context: document.body
+}).done(function(values) {
+	console.log("GOT RESPONSE");
+	console.log(values);
+
+	$("#bars").html("");
+	for (key in values)
+	{
+		newBar = bar.replace(bar_name, key);
+		newBar = newBar.replace(bar_prob, Math.round(values[key] * 100));
+		$("#bars").html($("#bars").html() + newBar);
+	}
+	$(function() {
+	  $("#bars li .bar").each( function( key, bar ) {
+		var percentage = $(this).data('percentage');
+		
+		$(this).animate({
+		  'height' : percentage + '%'
+		}, 1000);
+	  });
+	});	
 });
 	</script>		
-	</body>
+</body>
 </html>
