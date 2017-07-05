@@ -19,7 +19,7 @@ $(function() {
   ws.onmessage = function(message) {
     message = JSON.parse(message.data);
     console.log(message);
-    var phret = message["guessed_party"].split("===JSON===")[1]
+    var phret = message["guessed_party"]
     guessment = JSON.parse(phret)
     console.log(guessment)
     var lastFac = ""

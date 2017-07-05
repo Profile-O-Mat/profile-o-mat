@@ -96,7 +96,7 @@ func t_stream(data map[string]string) {
 			GuessedParty: out.String(),
 		}
 
-		//fmt.Println("Raw Struct", msg)
+		fmt.Println("Raw Struct", msg)
 		msg_rdy, err := json.Marshal(msg)
 		if err != nil {
 			fmt.Println("Err JSON Marshal", err)
