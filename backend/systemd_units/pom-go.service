@@ -1,0 +1,11 @@
+[Unit]
+Description=Profile-O-Mat golang backend
+
+[Service]
+Type=simple
+EnvironmentFile=/srv/Profile-O-Mat/backend/twitter.conf
+WorkingDirectory=/srv/Profile-O-Mat/backend/api
+ExecStart=/srv/Profile-O-Mat/backend/api/main
+TimeoutSec=0
+StandardOutput=journal
+RemainAfterExit=no

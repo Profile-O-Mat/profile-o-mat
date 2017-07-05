@@ -46,9 +46,12 @@ func t_stream(data map[string]string) {
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
 		cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
+		fmt.Println("DEBUG 0")
 		var out bytes.Buffer
 		cmd.Stdout = &out
+		fmt.Println("DEBUG 1")
 		err := cmd.Run()
+		fmt.Println("DEBUG 2")
 		if err != nil {
 			fmt.Println(out.String())
 			log.Fatal(err)
