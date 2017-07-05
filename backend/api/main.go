@@ -12,7 +12,10 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"sync"
 )
+
+var clientsMutex = sync.Mutex{}
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -30,7 +33,36 @@ type ws_msg struct {
 	GuessedParty string `json:"guessed_party"`
 }
 
-var clients []*websocket.Conn
+var clients []chan []byte
+
+func subscribe() chan []byte {
+	sub := make(chan []byte)
+	clientsMutex.Lock()
+	clients = append(clients, sub)
+	clientsMutex.Unlock()
+	return sub
+}
+
+func unsubscribe(sub chan []byte) {
+	clientsMutex.Lock()
+	newSubs := []chan []byte{}
+	subs := clients
+	for _, s := range subs {
+		if s != sub {
+			newSubs = append(newSubs, s)
+		}
+	}
+	clients = newSubs
+	clientsMutex.Unlock()
+}
+
+func broadcast(msg []byte) {
+	clientsMutex.Lock()
+	for _, c := range clients {
+		c <- msg
+	}
+	clientsMutex.Unlock()
+}
 
 func t_stream(data map[string]string) {
 	fmt.Println(os.Getenv("CONSUMER_KEY"))
@@ -46,12 +78,9 @@ func t_stream(data map[string]string) {
 	demux.Tweet = func(tweet *twitter.Tweet) {
 		fmt.Println(tweet.Text)
 		cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
-		fmt.Println("DEBUG 0")
 		var out bytes.Buffer
 		cmd.Stdout = &out
-		fmt.Println("DEBUG 1")
 		err := cmd.Run()
-		fmt.Println("DEBUG 2")
 		if err != nil {
 			fmt.Println(out.String())
 			log.Fatal(err)
@@ -67,25 +96,12 @@ func t_stream(data map[string]string) {
 			GuessedParty: out.String(),
 		}
 
-		fmt.Println("Raw Struct", msg)
+		//fmt.Println("Raw Struct", msg)
 		msg_rdy, err := json.Marshal(msg)
 		if err != nil {
 			fmt.Println("Err JSON Marshal", err)
 		}
-		for c := range clients {
-
-			err := clients[c].WriteMessage(websocket.TextMessage, msg_rdy)
-			if err != nil {
-				fmt.Println("Send error", err)
-				var clients_new []*websocket.Conn
-				for n := range clients {
-					if n != c {
-						clients_new = append(clients_new, clients[n])
-					}
-				}
-				clients = clients_new
-			}
-		}
+		broadcast(msg_rdy)
 
 	}
 
@@ -112,8 +128,18 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Websocket connected")
-	//defer c.Close()
-	clients = append(clients, c)
+	sub := subscribe()
+
+	for {
+		message := <-sub
+		err := c.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			break
+		}
+
+	}
+	unsubscribe(sub)
+	fmt.Println("Client disconnected")
 }
 
 func main() {
