@@ -1,25 +1,23 @@
 import sys
 import pickle
 import json
-import logging
-logging.basicConfig(filename="predict.log", level=logging.DEBUG)
 
 ## Load logic
-logging.debug("Importing data structure: ")
+#logger_pdc.debug("Importing data structure: ")
 
 clf = None
 count = None
 fractions = None
 
-logging.debug(" -> CountVectorizer")
+#logger_pdc.debug(" -> CountVectorizer")
 with open("../training/export_count.dat", "rb") as handle:
 	count = pickle.load(handle)
 
-logging.debug(" -> MLPClassifier")
+#logger_pdc.debug(" -> MLPClassifier")
 with open("../training/export_clf.dat", "rb") as handle:
 	clf = pickle.load(handle)
 
-logging.debug(" -> Fractions")
+#logger_pdc.debug(" -> Fractions")
 with open("../training/export_fractions.dat", "rb") as handle:
 	fractions = pickle.load(handle)
 
@@ -42,6 +40,6 @@ if __name__ == '__main__':
 		exit()
 
 	tweet = sys.argv[1]
-	logging.debug(tweet)
-	logging.debug("===JSON===")
+	#logger_pdc.debug(tweet)
+	#logger_pdc.debug("===JSON===")
 	print(json.dumps(predict(tweet)))

@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-
 from flask import Flask, request, jsonify, make_response
 from predict_account import predict_party
 
