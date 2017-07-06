@@ -20,8 +20,12 @@ a {
   color: #4CAF50;
 }
 #requester-container {
-	top:0px;
-	height: 300px;
+	height: 175px;
+	z-index: 1000;
+	transform: translate(0, -50%);
+}
+h1 {
+	font-size: 42pt;
 }
 .gone {
 	width: 0px;
