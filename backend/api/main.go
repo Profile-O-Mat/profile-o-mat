@@ -87,7 +87,7 @@ func t_stream(data map[string]string) {
 		}
 
 		msg := ws_msg{
-			Profile_img:  tweet.User.ProfileImageURL,
+			Profile_img:  tweet.User.ProfileImageURLHttps,
 			Name:         tweet.User.Name,
 			Handle:       tweet.User.ScreenName,
 			Text:         tweet.Text,
