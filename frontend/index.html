@@ -89,6 +89,7 @@ $("#requester").submit(function (event)
 	if (requesting) return; requesting = true;
 	
 	$("#chart").removeClass("gone");
+    $("#bars").html("<p>LOADING...</p>");
 	var calling = "https://profile-o-mat.de:8080/predict?user=" + account;
 	console.log(calling);
 
