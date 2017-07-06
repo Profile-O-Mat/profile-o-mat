@@ -46,6 +46,7 @@ console.log(calling);
 var bar = "<li><div data-percentage=\"_PER_\" class=\"bar\"></div><span>_NAM_</span></li>";
 var bar_prob = "_PER_";
 var bar_name = "_NAM_";
+var colors = ['009DE0', '1FAF12', 'FB0F0C', '1B86BA', 'DE0202', 'E4332D', 'CCCCCC'];
 $.ajax({
 	url: calling,
 	context: document.body
@@ -62,13 +63,14 @@ $.ajax({
 	}
 	$(function() {
 	  $("#bars li .bar").each( function( key, bar ) {
+	    bar.style.background = '#' + colors[key];
 		var percentage = $(this).data('percentage');
-		
+
 		$(this).animate({
 		  'height' : percentage + '%'
 		}, 1000);
 	  });
-	});	
+	});
 });
 	</script>
 <!-- Piwik -->
