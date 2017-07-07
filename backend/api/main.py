@@ -1,5 +1,4 @@
 #! /usr/bin/env python3
-
 from flask import Flask, request, jsonify, make_response
 from predict_account import predict_party
 
@@ -14,4 +13,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8081)

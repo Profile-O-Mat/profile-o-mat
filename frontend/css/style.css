@@ -19,6 +19,21 @@ a {
   text-decoration: none;
   color: #4CAF50;
 }
+#requester-container {
+	height: 175px;
+	z-index: 1000;
+	transform: translate(0, -50%);
+}
+h1 {
+	font-size: 42pt;
+}
+.gone {
+	width: 0px;
+	height: 0px;
+	overflow: hidden;
+	opacity: 0;
+	pointer-events: none;
+}
 a:hover {
   text-decoration: underline;
 }

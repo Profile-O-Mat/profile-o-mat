@@ -1,13 +1,16 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:400+700);
 body {
-  background: #30303A;
+  background: white;
   font-family: Roboto;
 }
 #chart {
+  position: absolute;
+  top: 100vh;
   width: 650px;
   height: 300px;
   margin: 30px auto 0;
   display: block;
+  transform: translate(0px, -330px);
 }
 #chart #numbers {
   width: 50px;
@@ -21,28 +24,26 @@ body {
   text-align: right;
   padding-right: 1em;
   list-style: none;
-  height: 29px;
-  border-bottom: 1px solid #444;
+  height: 30px;
   position: relative;
-  bottom: 30px;
+  bottom: 20px;
 }
 #chart #numbers li:last-child {
   height: 30px;
 }
 #chart #numbers li span {
-  color: #eee;
+  color: #4CAF50;
   position: absolute;
   bottom: 0;
   right: 10px;
 }
 #chart #bars {
   display: inline-block;
-  background: rgba(0, 0, 0, 0.2);
   width: 600px;
   height: 300px;
   padding: 0;
   margin: 0;
-  box-shadow: 0 0 0 1px #444;
+  /*box-shadow: -1px 1px 0 1px #444;*/
 }
 #chart #bars li {
   display: table-cell;
@@ -55,8 +56,8 @@ body {
 #chart #bars li .bar {
   display: block;
   width: 70px;
+  height: 0%;
   margin-left: 15px;
-  background: #49E;
   position: absolute;
   bottom: 0;
 }
@@ -65,13 +66,13 @@ body {
   cursor: pointer;
 }
 #chart #bars li .bar:hover:before {
-  color: white;
+  color: black;
   content: attr(data-percentage) '%';
   position: relative;
   bottom: 20px;
 }
 #chart #bars li span {
-  color: #eee;
+  color: #4CAF50;
   width: 100%;
   position: absolute;
   bottom: -4em;
@@ -83,5 +84,9 @@ body {
 #chart #bars p
 {
   text-align: center;
-  color: white;
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  height: 2em;
+  color: #4CAF50;
 }

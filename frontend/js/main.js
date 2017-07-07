@@ -8,18 +8,25 @@ $(function() {
   t = document.getElementById('timeline')
 
   // Web Socket
-  var ws = new WebSocket("ws://styx.me:8000");
+  var ws = new WebSocket("wss://styx.me:8010");
 
-  // Connection bestätigung
+  // Connection best�tigung
   ws.onopen = function(){
     console.log("Socket has been opened!");
   };
-
+  
+  ws.onclose = function(e){
+    console.log("Socket connection lost!");
+  };
+  ws.onerror = function(e){
+    console.log("Socket failed!");
+  };
+  
   // Nachrichten anzeigen
   ws.onmessage = function(message) {
     message = JSON.parse(message.data);
     console.log(message);
-    var phret = message["guessed_party"].split("===JSON===")[1]
+    var phret = message["guessed_party"]
     guessment = JSON.parse(phret)
     console.log(guessment)
     var lastFac = ""
@@ -31,7 +38,7 @@ $(function() {
         lastFac = key
       }
     guessed_faction = lastFac.replace("Die Linke", "linke")
-                             .replace("Bündnis 90\\Die Grünen", "b90")
+                             .replace(new RegExp("B.*90.*", "gm"), "b90")
                              .replace("fraktionslos", "erica")
 
     var tweet = '<div class="tweet"><img src="' + message["profile_img"] + 

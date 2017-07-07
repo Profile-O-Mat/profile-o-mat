@@ -3,8 +3,9 @@
   <head>
     <title>Profile-O-Mat</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.css">
+	<link rel="stylesheet" type="text/css" href="./css/predict.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
@@ -14,24 +15,47 @@
 	  <img src="https://bitbucket.org/zgramana/bitbucket-ribbons/raw/988dffc5fbeb/png/bitbucket-ribbon-dark-blue-l.png" />
 	</a>
     <section class="sec1 animated fadeIn">
-      <h1>Profile-O-Mat</h1>
-      <p style="margin-top:10px;margin-bottom:10px;">Type in a twitter name, get their political orientation.</p>
-      <form action="predict.html" method="get">
-        <input name="name" type="text" placeholder="@Username">
-        <input type="submit">
-      </form>
+		<div id="requester-container">
+			<h1>Profile-O-Mat</h1>
+			<p style="margin-top:10px;margin-bottom:10px;">Gib einen Twitternamen ein und wir finden die passende Partei!</p>
+			<form id="requester" method="get">
+				<input id="requester-name" name="name" type="text" placeholder="@Twittername"></input>
+				<input type="submit"></input>
+			</form>
+			<p style="margin-top:10px;margin-bottom:10px;">(Es werden nur Accounts mit deutschsprachigen Tweets unterstützt.)</p>
+		</div>
+
+		<div id="chart" class="gone">
+			<ul id="numbers">
+				<li><span></span></li>
+				<li><span></span></li>
+				<li><span></span></li>
+				<li><span></span></li>
+				<li><span></span></li>
+				<li><span>50%</span></li>
+				<li><span>40%</span></li>
+				<li><span>30%</span></li>
+				<li><span>20%</span></li>
+				<li><span>10%</span></li>
+				<li><span></span></li>
+			</ul>
+
+			<ul id="bars">
+				<p>LOADING...</p>
+			</ul>
+		</div>
     </section>
 
     <section class="sec2" id="main">
-      <div class="content">
-        <div class="timeline">
-        </div>
-      </div>
+		<div class="content">
+			<div class="timeline">
+			</div>
+		</div>
     </section>
 
     <section class="sec3">
-      <img src="images/jugendhackt.svg">
-      <p>&copy; 2017 Profile-O-Mat @ <a href="http://jugendhackt.org" target="_blank">Jugend Hackt</a></p>
+		<img src="images/jugendhackt.svg">
+		<p>&copy; 2017 Profile-O-Mat @ <a href="http://jugendhackt.org" target="_blank">Jugend Hackt</a></p>
     </section>
 
     <script src="js/main.js"></script>
@@ -50,5 +74,59 @@
   })();
 </script>
 <!-- End Piwik Code -->
+<script>
+var requesting = false;
+var bar = "<li><div data-percentage=\"_PER_\" class=\"bar\"></div><span>_NAM_</span></li>";
+var bar_prob = "_PER_";
+var bar_name = "_NAM_";
+var colors = ['009DE0', '1FAF12', 'FB0F0C', '1B86BA', 'DE0202', 'E4332D', 'CCCCCC'];
+$("#requester").submit(function (event)
+{
+	event.preventDefault();
+	account = $("#requester-name").val().replace(/\s/g, ""); //Remove all whitespaces
+	console.log("submitted " + account);
+	if (account == "") return;
+	if (requesting) return; requesting = true;
+	/*if (!twitterNameExists(account)) {
+	    // meldung, dass name nicht existiert
+	    requesting = false;
+	    return;
+	}*/
+	
+	$("#chart").removeClass("gone");
+    $("#bars").html("<p>LOADING...</p>");
+	var calling = "https://profile-o-mat.de:8080/predict?user=" + account;
+	console.log(calling);
+
+	_paq.push(['trackEvent', 'Predict', 'Account', account]); //piwik tracking
+	$.ajax({
+		url: calling,
+		context: document.body
+	}).done(function(values) {
+		console.log(values);
+
+		$("#bars").html("");
+		for (key in values)
+		{
+			newBar = bar.replace(bar_name, key.replace(new RegExp("B.*90.*", "gm"), "B/90"));
+			newBar = newBar.replace(bar_prob, Math.round(values[key] * 100));
+			$("#bars").html($("#bars").html() + newBar);
+		}
+		$(function() {
+		  $("#bars li .bar").each( function( key, bar ) {
+			bar.style.background = '#' + colors[key];
+			var percentage = $(this).data('percentage');
+			
+			$(this).css("height","0px");
+			$(this).animate({
+			  height : percentage + '%'
+			}, 1000);
+		  });
+
+		requesting = false;
+		});
+	});
+});
+</script>
   </body>
 </html>

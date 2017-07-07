@@ -3,13 +3,14 @@ import sys
 import subprocess
 import statistics
 import json
-from twitter import *
 
+from twitter import *
 import predict
 
 api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKEN_SECRET'], os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']))
 
 def predict_party(twitter_handle):
+    #logger_pdca.debug("Predicting " + twitter_handle)
     predictions = {}
     statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=200)
     for status in statuses:
@@ -23,7 +24,7 @@ def predict_party(twitter_handle):
     for key, value in predictions.items():
         # verbose: print(key, value)
         predictions[key] = statistics.mean(value)
-    print("=== done ====")
+    #logger_pdca.debug("=== done ====")
     return predictions
 
 
