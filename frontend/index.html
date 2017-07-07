@@ -17,12 +17,12 @@
     <section class="sec1 animated fadeIn">
 		<div id="requester-container">
 			<h1>Profile-O-Mat</h1>
-			<p style="margin-top:10px;margin-bottom:10px;">Gib einen Twitter Handle ein, um eine Vorhersage zu treffen.</p>
+			<p style="margin-top:10px;margin-bottom:10px;">Gib einen Twitternamen ein und wir finden die passende Partei!</p>
 			<form id="requester" method="get">
-				<input id="requester-name" name="name" type="text" placeholder="@Username"></input>
+				<input id="requester-name" name="name" type="text" placeholder="@Twittername"></input>
 				<input type="submit"></input>
 			</form>
-			<p style="margin-top:10px;margin-bottom:10px;">(Nur Accounts mit deutschsprachigen Tweets werden unterstzt!)</p>
+			<p style="margin-top:10px;margin-bottom:10px;">(Es werden nur Accounts mit deutschsprachigen Tweets unterstützt.)</p>
 		</div>
 
 		<div id="chart" class="gone">
@@ -87,6 +87,11 @@ $("#requester").submit(function (event)
 	console.log("submitted " + account);
 	if (account == "") return;
 	if (requesting) return; requesting = true;
+	/*if (!twitterNameExists(account)) {
+	    // meldung, dass name nicht existiert
+	    requesting = false;
+	    return;
+	}*/
 	
 	$("#chart").removeClass("gone");
     $("#bars").html("<p>LOADING...</p>");
