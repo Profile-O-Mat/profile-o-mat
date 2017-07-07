@@ -4,18 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/dghubble/go-twitter/twitter"
-	"github.com/dghubble/oauth1"
+	"github.com/ChimeraCoder/anaconda"
 	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"sync"
 )
 
 var clientsMutex = sync.Mutex{}
+var tweetHistoryMutex = sync.Mutex{}
+
+var lastmsgs [5][]byte
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -65,59 +68,78 @@ func broadcast(msg []byte) {
 }
 
 func t_stream(data map[string]string) {
-	fmt.Println(os.Getenv("CONSUMER_KEY"))
-	config := oauth1.NewConfig(os.Getenv("CONSUMER_KEY"), os.Getenv("CONSUMER_SECRET"))
-	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN_KEY"), os.Getenv("ACCESS_TOKEN_SECRET"))
-	// OAuth1 http.Client will automatically authorize Requests
-	httpClient := config.Client(oauth1.NoContext, token)
+	fmt.Println("Config")
+	consumer_key := os.Getenv("CONSUMER_KEY")
+	consumer_secret := os.Getenv("CONSUMER_SECRET")
+	access_token := os.Getenv("ACCESS_TOKEN_KEY")
+	access_token_secret := os.Getenv("ACCESS_TOKEN_SECRET")
 
-	// Twitter Client
-	client := twitter.NewClient(httpClient)
+	anaconda.SetConsumerKey(consumer_key[:len(consumer_key)-1])
+	anaconda.SetConsumerSecret(consumer_secret[:len(consumer_secret)-1])
+	api := anaconda.NewTwitterApi(access_token[:len(access_token)-1], access_token_secret[:len(access_token_secret)-1])
+	fmt.Println(consumer_key)
+	ok, err := api.VerifyCredentials()
 
-	demux := twitter.NewSwitchDemux()
-	demux.Tweet = func(tweet *twitter.Tweet) {
-		fmt.Println(tweet.Text)
-		cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		err := cmd.Run()
-		if err != nil {
-			fmt.Println(out.String())
-			log.Fatal(err)
-		}
-
-		msg := ws_msg{
-			Profile_img:  tweet.User.ProfileImageURLHttps,
-			Name:         tweet.User.Name,
-			Handle:       tweet.User.ScreenName,
-			Text:         tweet.Text,
-			Date:         tweet.CreatedAt,
-			RealParty:    data[tweet.User.ScreenName],
-			GuessedParty: out.String(),
-		}
-
-		fmt.Println("Raw Struct", msg)
-		msg_rdy, err := json.Marshal(msg)
-		if err != nil {
-			fmt.Println("Err JSON Marshal", err)
-		}
-		broadcast(msg_rdy)
-
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		panic("Login failed")
 	}
 
 	fmt.Println("Starting Stream...")
-	// USER (quick test: auth'd user likes a tweet -> event)
-	userParams := &twitter.StreamUserParams{
-		StallWarnings: twitter.Bool(true),
-		With:          "followings",
-	}
-	stream, err := client.Streams.User(userParams)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	// Receive messages until stopped or stream quits
-	go demux.HandleChan(stream.Messages)
+	options := url.Values{}
+	options.Set("StallWarnings", "true")
+	options.Set("With", "followings")
+	s := api.UserStream(options)
+
+	for {
+		item := <-s.C
+		switch tweet := item.(type) {
+		case anaconda.Tweet:
+			fmt.Println(tweet.Text)
+			cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
+			var out bytes.Buffer
+			cmd.Stdout = &out
+			err := cmd.Run()
+			if err != nil {
+				fmt.Println(out.String())
+				log.Fatal(err)
+			}
+
+			msg := ws_msg{
+				Profile_img:  tweet.User.ProfileImageUrlHttps,
+				Name:         tweet.User.Name,
+				Handle:       tweet.User.ScreenName,
+				Text:         tweet.Text,
+				Date:         tweet.CreatedAt,
+				RealParty:    data[tweet.User.ScreenName],
+				GuessedParty: out.String(),
+			}
+
+			fmt.Println("Raw Struct", msg)
+			msg_rdy, err := json.Marshal(msg)
+			if err != nil {
+				fmt.Println("Err JSON Marshal", err)
+			}
+			tweetHistoryMutex.Lock()
+			var newmsgs [5][]byte
+			for i, _ := range lastmsgs {
+				if i != 4 {
+					newmsgs[i] = lastmsgs[i+1]
+				} else {
+					newmsgs[4] = msg_rdy
+				}
+			}
+			lastmsgs = newmsgs
+
+			tweetHistoryMutex.Unlock()
+			broadcast(msg_rdy)
+		default:
+
+		}
+	}
 }
 
 func echo(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +151,16 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Websocket connected")
 	sub := subscribe()
-
+	tweetHistoryMutex.Lock()
+	for _, t := range lastmsgs {
+		if t != nil {
+			err := c.WriteMessage(websocket.TextMessage, t)
+			if err != nil {
+				break
+			}
+		}
+	}
+	tweetHistoryMutex.Unlock()
 	for {
 		message := <-sub
 		err := c.WriteMessage(websocket.TextMessage, message)
@@ -149,5 +180,10 @@ func main() {
 
 	go t_stream(data)
 	http.HandleFunc("/", echo)
-	log.Fatal(http.ListenAndServe("0.0.0.0:8001", nil))
+	address := "0.0.0.0:8001"
+	if os.Getenv("ENV") == "dev" {
+		address = "127.0.0.1:8010"
+		fmt.Println("Starting up dev enviroment")
+	}
+	log.Fatal(http.ListenAndServe(address, nil))
 }
