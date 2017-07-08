@@ -83,7 +83,7 @@ var colors = ['009DE0', '1FAF12', 'FB0F0C', '1B86BA', 'DE0202', 'E4332D', 'CCCCC
 $("#requester").submit(function (event)
 {
 	event.preventDefault();
-	account = $("#requester-name").val().replace(/\s/g, ""); //Remove all whitespaces
+	account = $("#requester-name").val().replace(/\s/g, "").replace("@", ""); //Remove all whitespaces
 	console.log("submitted " + account);
 	if (account == "") return;
 	if (requesting) return; requesting = true;
