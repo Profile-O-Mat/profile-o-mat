@@ -58,8 +58,6 @@ tf_transformer = TfidfTransformer()
 data_tf = tf_transformer.fit_transform(data_counts)
 print("Tf data: " + str(data_tf.shape))
 
-features = data_tf.toarray()
-
 
 ###
 ### Convert fractions from str to int
@@ -75,16 +73,6 @@ for fraction in fractionset: # iterate over unique entrys
 for fraction in tweetfraction: 
 	labels.append(fractions[fraction]) # change entry in original dataset to int classes
 
-# Verbose
-print("Got " + str(len(features)) + " training entrys")
-print("Got " + str(len(labels)) + " labels")
-print("Got " + str(len(features[0])) + " units long tfidf vectors")
-
-# Check for consistent map [DEBUG]
-for i in range(0, DATA_SIZE-1):
-	if( len(features[i]) != len(features[0]) ):
-		print("FATAL: Incosistent dimension!")
-
 print("Data is ready!")
 
 
@@ -95,7 +83,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 
 # Take 33% of the data for testing
-X_train, X_test, y_train, y_test = train_test_split(features, labels, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(data_tf, labels, test_size=0.33, random_state=42)
 
 # Note that another 10% of the taining data is used as validation data for early_stopping
 # Doing so allows the usage of an adaptive learning rate
@@ -132,7 +120,7 @@ print("Exporting data structures:")
 
 print(" -> CountVectorizer")
 with open("export_count.dat", "wb+") as handle:
-	pickle.dump(count, handle)
+	pickle.dump(count_vect, handle)
 
 print(" -> Tf-idf Transformer")
 with open("export_tfidf.dat", "wb+") as handle:

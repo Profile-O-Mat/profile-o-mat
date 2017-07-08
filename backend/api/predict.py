@@ -2,29 +2,30 @@ import sys
 import pickle
 import json
 
-## Load logic
-#logger_pdc.debug("Importing data structure: ")
-
+###
+### Load logic
+###
 clf = None
 count = None
 fractions = None
+tf_transformer = None
 
-#logger_pdc.debug(" -> CountVectorizer")
 with open("../training/export_count.dat", "rb") as handle:
 	count = pickle.load(handle)
 
-#logger_pdc.debug(" -> MLPClassifier")
+with open("../training/export_tfidf.dat", "rb") as handle:
+	tf_transformer = pickle.load(handle)
+
 with open("../training/export_clf.dat", "rb") as handle:
 	clf = pickle.load(handle)
 
-#logger_pdc.debug(" -> Fractions")
 with open("../training/export_fractions.dat", "rb") as handle:
 	fractions = pickle.load(handle)
 
 
 def predict(tweet):
 	## Predict
-	features = count.transform({tweet}).toarray()
+	features = tf_transformer.transform(count.transform({tweet})).toarray() # vectorize
 	prediction = clf.predict_proba(features)
 	results = {}
 
@@ -40,6 +41,4 @@ if __name__ == '__main__':
 		exit()
 
 	tweet = sys.argv[1]
-	#logger_pdc.debug(tweet)
-	#logger_pdc.debug("===JSON===")
 	print(json.dumps(predict(tweet)))
