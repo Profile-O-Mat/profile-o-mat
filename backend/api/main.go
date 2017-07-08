@@ -36,6 +36,13 @@ type ws_msg struct {
 	GuessedParty string `json:"guessed_party"`
 }
 
+type apiConfig struct {
+	ConsumerKey      string `json:"consumerKey"`
+	ConsumrSecret    string `json:"consumerSecret"`
+	AccessTokenKey   string `json:"accessTokenKey"`
+	AcessTokenSecret string `json:"accessTokenSecret"`
+}
+
 var clients []chan []byte
 
 func subscribe() chan []byte {
@@ -67,17 +74,11 @@ func broadcast(msg []byte) {
 	clientsMutex.Unlock()
 }
 
-func t_stream(data map[string]string) {
-	fmt.Println("Config")
-	consumer_key := os.Getenv("CONSUMER_KEY")
-	consumer_secret := os.Getenv("CONSUMER_SECRET")
-	access_token := os.Getenv("ACCESS_TOKEN_KEY")
-	access_token_secret := os.Getenv("ACCESS_TOKEN_SECRET")
-
-	anaconda.SetConsumerKey(consumer_key[:len(consumer_key)-1])
-	anaconda.SetConsumerSecret(consumer_secret[:len(consumer_secret)-1])
-	api := anaconda.NewTwitterApi(access_token[:len(access_token)-1], access_token_secret[:len(access_token_secret)-1])
-	fmt.Println(consumer_key)
+func t_stream(data map[string]string, keys *apiConfig) {
+	fmt.Println(keys)
+	anaconda.SetConsumerKey(keys.ConsumerKey)
+	anaconda.SetConsumerSecret(keys.ConsumrSecret)
+	api := anaconda.NewTwitterApi(keys.AccessTokenKey, keys.AcessTokenSecret)
 	ok, err := api.VerifyCredentials()
 
 	if err != nil {
@@ -178,7 +179,11 @@ func main() {
 	mdbs_bytes, _ := ioutil.ReadFile("mdbs_twitter.json")
 	json.Unmarshal(mdbs_bytes, &data)
 
-	go t_stream(data)
+	var config apiConfig
+	configBytes, _ := ioutil.ReadFile("twitter.conf")
+
+	json.Unmarshal(configBytes, &config)
+	go t_stream(data, &config)
 	http.HandleFunc("/", echo)
 	address := "0.0.0.0:8001"
 	if os.Getenv("ENV") == "dev" {
