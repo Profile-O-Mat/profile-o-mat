@@ -1,14 +1,17 @@
 ###
 ### Highly experimental version
 ###
-
 import numpy as np
 import random
 import os
 
-DATA_SIZE = 10000
-ITERATIONS = 1
-LAYER = ()
+DATA_SIZE = 300000
+L2_PENALTY = 1e-7
+LEARNING_RATE_INIT = 1e-3
+ITERATIONS = 500
+LAYER = (100, 100)
+SOLVER = "adam" # adam and lbfgs are recommended
+
 
 ###
 ### load data
@@ -19,7 +22,7 @@ tweetcontent = []
 
 # read files
 for fraction in os.listdir("../training_data/" + "partys/"):
-    print("Reading..." + fraction)
+    print("Reading... " + fraction)
     for account in os.listdir("../training_data/" + "partys/" + fraction):
         for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
             file = open("../training_data/" + "partys/" + fraction + "/" + account + "/" + id, 'r')
@@ -37,10 +40,12 @@ random.shuffle(shuffler)
 tweetfraction, tweetcontent = zip(*shuffler)
 
 # pick first DATA_SIZE tweets
+DATA_SIZE = min(DATA_SIZE, len(tweetfraction))
 tweetfraction = tweetfraction[0:DATA_SIZE]
 tweetcontent = tweetcontent[0:DATA_SIZE]
 
 data_row = np.asarray(tweetcontent)
+
 
 ###
 ### Vectorize input
@@ -89,11 +94,12 @@ X_train, X_test, y_train, y_test = train_test_split(data_tf, labels, test_size=0
 # Doing so allows the usage of an adaptive learning rate
 
 print("Creating MLPClassifier...")
-clf = MLPClassifier(solver='sgd', activation='tanh', learning_rate='adaptive', early_stopping=True,
-					hidden_layer_sizes=LAYER, random_state=1, max_iter=ITERATIONS, verbose=True)
+clf = MLPClassifier(solver=SOLVER, activation='tanh', verbose=True, early_stopping=False,
+					hidden_layer_sizes=LAYER, max_iter=ITERATIONS, alpha=L2_PENALTY, learning_rate_init=LEARNING_RATE_INIT)
 
 print("Training ANN (max. " + str(ITERATIONS) + " itr.)...")
 clf.fit(X_train, y_train)
+
 
 ###
 ### Evaluating performance
