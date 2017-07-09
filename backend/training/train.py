@@ -5,11 +5,11 @@ import numpy as np
 import random
 import os
 
-DATA_SIZE = 300000
+DATA_SIZE = 30000
 L2_PENALTY = 1e-7
 LEARNING_RATE_INIT = 1e-3
 ITERATIONS = 500
-LAYER = (100, 100)
+LAYER = (500, 500, 500)
 SOLVER = "adam" # adam and lbfgs are recommended
 
 
