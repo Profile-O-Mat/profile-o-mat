@@ -31,6 +31,9 @@ in `backend/training_data` run `fetch_data.sh`. You should get a total of about 
 ## Train the network
 in `backend/training` run `python train.py`. You can adjust `ITERATIONS` and `LAYER` in this file.
 
+### Already trained network
+You can download an already trained network [here](https://www.dropbox.com/s/4pytchrk6axidtw/trained.zip?dl=0) ([Direct Download](https://www.dropbox.com/s/4pytchrk6axidtw/trained.zip?dl=1))
+
 ## Predict a single tweet
 in `backend/api/` run `python predict.py "Text here"`
 
