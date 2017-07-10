@@ -6,11 +6,12 @@ import random
 import os
 
 DATA_SIZE = 30000
-L2_PENALTY = 1e-7
+L2_PENALTY = 5e-4
 LEARNING_RATE_INIT = 1e-3
 ITERATIONS = 500
 LAYER = (500, 500, 500)
 SOLVER = "adam" # adam and lbfgs are recommended
+TEST_SIZE = 1/3
 
 
 ###
@@ -22,17 +23,18 @@ tweetcontent = []
 
 # read files
 for fraction in os.listdir("../training_data/" + "partys/"):
-    print("Reading... " + fraction)
-    for account in os.listdir("../training_data/" + "partys/" + fraction):
-        for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
-            file = open("../training_data/" + "partys/" + fraction + "/" + account + "/" + id, 'r')
-            # tweets = np.append(tweets, [fraction, file.read()])
-            tweetfraction.append(fraction)
-            tweetcontent.append(file.read())
+	print("Reading " + fraction + "... ", end='')
+	for account in os.listdir("../training_data/" + "partys/" + fraction):
+		for id in os.listdir("../training_data/" + "partys/" + fraction + "/" + account + "/"):
+			file = open("../training_data/" + "partys/" + fraction + "/" + account + "/" + id, 'r')
+			# tweets = np.append(tweets, [fraction, file.read()])
+			tweetfraction.append(fraction)
+			tweetcontent.append(file.read())
 
-            file.close()
+			file.close()
+	print("OK!")
 
-print("Finished reading")
+print("Finished reading: ", end='')
 
 # shuffle data
 shuffler = list(zip(tweetfraction, tweetcontent))
@@ -44,7 +46,8 @@ DATA_SIZE = min(DATA_SIZE, len(tweetfraction))
 tweetfraction = tweetfraction[0:DATA_SIZE]
 tweetcontent = tweetcontent[0:DATA_SIZE]
 
-data_row = np.asarray(tweetcontent)
+data_raw = np.asarray(tweetcontent)
+print(str(len(data_raw)) + " tweets loaded!")
 
 
 ###
@@ -54,14 +57,16 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
 # Create Bag-Of-Words
+print("\nFitting CountVectorizer... ", end='')
 count_vect = CountVectorizer()
-data_counts = count_vect.fit_transform(data_row)
-print("Word bag: " + str(data_counts.shape))
+data_counts = count_vect.fit_transform(data_raw)
+print("OK!")
 
 # Create term frequency times inverse document frequency (tf-idf)
+print("Fitting Tfidf-Vectorizer... ", end='')
 tf_transformer = TfidfTransformer()
 data_tf = tf_transformer.fit_transform(data_counts)
-print("Tf data: " + str(data_tf.shape))
+print("OK, final data shape: " + str(data_tf.shape))
 
 
 ###
@@ -88,7 +93,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 
 # Take 33% of the data for testing
-X_train, X_test, y_train, y_test = train_test_split(data_tf, labels, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(data_tf, labels, test_size=TEST_SIZE, random_state=42)
 
 # Note that another 10% of the taining data is used as validation data for early_stopping
 # Doing so allows the usage of an adaptive learning rate
@@ -107,14 +112,20 @@ clf.fit(X_train, y_train)
 from sklearn import metrics
 
 # Naive test error
-print("Predicting test data...")
-predictions = clf.predict(X_test)
-error = np.mean( predictions != y_test )
+print("Evaluating performance...")
+p_train = clf.predict(X_train)
+p_test = clf.predict(X_test)
+e_train = np.mean( p_train != y_train )
+e_test = np.mean( p_test != y_test )
 
-print("Test error: " + str(error))
+print("Training error: " + str(e_train))
+print("Test error: " + str(e_test))
 
 # Advanced performance analzsis
-print(metrics.classification_report(y_test, predictions, target_names=list(fractionset)))
+print("\nTraining data:")
+print(metrics.classification_report(y_train, p_train, target_names=list(fractionset)))
+print("\nTest data:")
+print(metrics.classification_report(y_test, p_test, target_names=list(fractionset)))
 
 
 ###
@@ -122,7 +133,7 @@ print(metrics.classification_report(y_test, predictions, target_names=list(fract
 ###
 import pickle
 
-print("Exporting data structures:")
+print("\nExporting data structures:")
 
 print(" -> CountVectorizer")
 with open("export_count.dat", "wb+") as handle:
