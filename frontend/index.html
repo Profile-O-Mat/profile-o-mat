@@ -117,28 +117,41 @@ $("#requester").submit(function (event)
 		url: calling,
 		context: document.body
 	}).done(function(values) {
-		console.log(values);
-
-		$("#bars").html("");
-		for (key in values)
+		if (values["success"] == false)
 		{
-			newBar = bar.replace(bar_name, key.replace(new RegExp("B.*90.*", "gm"), "B/90"));
-			newBar = newBar.replace(bar_prob, Math.round(values[key] * 100));
-			$("#bars").html($("#bars").html() + newBar);
+			$("#chart").addClass("gone");
+			$('#requester-name').effect("highlight", {"color": "#f99"}, 1500);
+			requesting = false;
 		}
-		$(function() {
-		  $("#bars li .bar").each( function( key, bar ) {
-			bar.style.background = '#' + colors[key];
-			var percentage = $(this).data('percentage');
-			
-			$(this).css("height","0px");
-			$(this).animate({
-			  height : percentage + '%'
-			}, 1000);
-		  });
+		else
+		{
+			values = values["data"]
+			console.log(values);
 
+			$("#bars").html("");
+			for (key in values)
+			{
+				newBar = bar.replace(bar_name, key.replace(new RegExp("B.*90.*", "gm"), "B/90"));
+				newBar = newBar.replace(bar_prob, Math.round(values[key] * 100));
+				$("#bars").html($("#bars").html() + newBar);
+			}
+			$(function() {
+			  $("#bars li .bar").each( function( key, bar ) {
+				bar.style.background = '#' + colors[key];
+				var percentage = $(this).data('percentage');
+			
+				$(this).css("height","0px");
+				$(this).animate({
+				  height : percentage + '%'
+				}, 1000);
+			  });
+
+			requesting = false;
+			});
+		}
+	}).fail(function(values) {
+		$("#bars").html("<p>Sorry, there was an internal error :(</p>");
 		requesting = false;
-		});
 	});
 });
 
