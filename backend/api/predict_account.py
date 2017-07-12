@@ -15,7 +15,14 @@ api = Twitter(auth=OAuth(data['accessTokenKey'], data['accessTokenSecret'], data
 def predict_party(twitter_handle):
     #logger_pdca.debug("Predicting " + twitter_handle)
     predictions = {}
-    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=200)
+    try:
+	    statuses = api.statuses.user_timeline(screen_name=twitter_handle, count=200)
+    except TwitterHTTPError as error:
+        if "error" in error.response_data:
+            return dict({"success": False, "error": error.response_data["error"], "data": {}})
+        if "errors" in error.response_data:
+            return dict({"success": False, "error": error.response_data["errors"][0], "data": {}})
+        return dict({"success": False, "error": "unknown", "data": {}})
     for status in statuses:
         prediction = predict.predict(status["text"])
 
@@ -28,8 +35,14 @@ def predict_party(twitter_handle):
         # verbose: print(key, value)
         predictions[key] = statistics.mean(value)
     #logger_pdca.debug("=== done ====")
-    return predictions
+    return dict({"success": True, "error": {}, "data": predictions})
 
 
-if __name__ == '__main__':
-    print(json.dumps(predict_party(sys.argv[1])))
+if __name__ == '__main__': # Only happens if called manualy or by go backend
+    result = predict_party(sys.argv[1])
+    if (result["success"] == True):
+        print(json.dumps(result["data"]))
+        exit(0)
+    print(json.dumps(result["error"])) # error message will appear in journal
+    exit(1) # Go backend will quit and not relay error to user
+
