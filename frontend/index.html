@@ -22,8 +22,10 @@
 			<form id="requester" method="get">
 				<input id="requester-name" name="name" type="text" placeholder="@Twittername"></input>
 				<input type="submit"></input>
+				<div id="loading" class="gone"></div>
 			</form>
 			<p style="margin-top:10px;margin-bottom:10px;">(Es werden nur Accounts mit deutschsprachigen Tweets unterstützt.)</p>
+			<p id="internal-error" class="gone">Oups, looks like there was an internal server error :(</p>
 		</div>
 
 		<div id="chart" class="gone">
@@ -53,7 +55,7 @@
 		  <label for="feedselector_account" class="switch-label switch-label-off">ACCOUNT</label>
 		  <input type="radio" class="switch-input" name="feedselector" value="tweet" id="feedselector_tweet">
 		  <label for="feedselector_tweet" class="switch-label switch-label-on">TWEET</label>
-		  <span class="switch-selection"></span>
+		  <span class="switch-selection" class="gone"></span>
 		</div>
 		<div class="content">
 			<div id="timeline" class="timeline">
@@ -107,8 +109,8 @@ $("#requester").submit(function (event)
 	    return;
 	}*/
 	
-	$("#chart").removeClass("gone");
-    $("#bars").html("<p>LOADING...</p>");
+	$("#internal-error:not(.gone)").addClass("gone");
+	$("#loading.gone").removeClass("gone");
 	var calling = "https://profile-o-mat.de:8080/predict?user=" + account;
 	console.log(calling);
 
@@ -117,14 +119,15 @@ $("#requester").submit(function (event)
 		url: calling,
 		context: document.body
 	}).done(function(values) {
+		$("#loading:not(.gone)").addClass("gone");
 		if (values["success"] == false)
 		{
-			$("#chart").addClass("gone");
 			$('#requester-name').effect("highlight", {"color": "#f99"}, 1500);
 			requesting = false;
 		}
 		else
 		{
+			$("#chart.gone").removeClass("gone");
 			values = values["data"]
 			console.log(values);
 
@@ -150,7 +153,8 @@ $("#requester").submit(function (event)
 			});
 		}
 	}).fail(function(values) {
-		$("#bars").html("<p>Sorry, there was an internal error :(</p>");
+		$("#internal-error.gone").removeClass("gone");
+		$("#loading:not(.gone)").addClass("gone");
 		requesting = false;
 	});
 });
