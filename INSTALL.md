@@ -37,7 +37,7 @@ After successfully receiving the training data you can navigate to `backend/trai
 You can download an already trained network [here](https://www.dropbox.com/s/4pytchrk6axidtw/trained.zip?dl=0) ([Direct Download](https://www.dropbox.com/s/4pytchrk6axidtw/trained.zip?dl=1))
 
 ## Predict a single tweet
-To predict a single tweet (or other pieces of text) use the python script `api/predict.py` with your piece of text as the first argument (e.g. `python predict.py "Hallo das ist ein text"). Note again that the ANN is trained using tweets of German politicians and thus will not understand English words or text. The output will be JSON.
+To predict a single tweet (or other pieces of text) use the python script `api/predict.py` with your piece of text as the first argument (e.g. `python predict.py "Hallo das ist ein text"`). Note again that the ANN is trained using tweets of German politicians and thus will not understand English words or text. The output will be JSON.
 
 ## Predict based on the last tweets of an account
 Using the python script `predict_account.py [account name]` will request the last 200 tweets of the account holder, predict each one of them and eventually calculate the mean of all predictions. Again the ANN does not understand English, and the output is formatted in JSON.
