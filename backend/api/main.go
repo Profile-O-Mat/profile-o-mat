@@ -33,7 +33,8 @@ type ws_msg struct {
 	Text         string `json:"text"`
 	Date         string `json:"date"`
 	RealParty    string `json:"real_party"`
-	GuessedParty string `json:"guessed_party"`
+	GuessedPartyTweet	string `json:"guessed_party:tweet"`
+	GuessedPartyAccount	string `json:"guessed_party:account"`
 }
 
 type apiConfig struct {
@@ -74,6 +75,19 @@ func broadcast(msg []byte) {
 	clientsMutex.Unlock()
 }
 
+func execPython(command string, argument string) string {
+	cmd := exec.Command("python3", command, argument)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &out
+	err := cmd.Run()
+	if err != nil {
+		fmt.Println(out.String())
+		log.Fatal(err)
+	}
+	return out.String()
+}
+
 func t_stream(data map[string]string, keys *apiConfig) {
 	fmt.Println(keys)
 	anaconda.SetConsumerKey(keys.ConsumerKey)
@@ -100,15 +114,6 @@ func t_stream(data map[string]string, keys *apiConfig) {
 		switch tweet := item.(type) {
 		case anaconda.Tweet:
 			fmt.Println(tweet.Text)
-			cmd := exec.Command("python3", "predict.py", "\""+tweet.Text+"\"")
-			var out bytes.Buffer
-			cmd.Stdout = &out
-			err := cmd.Run()
-			if err != nil {
-				fmt.Println(out.String())
-				log.Fatal(err)
-			}
-
 			msg := ws_msg{
 				Profile_img:  tweet.User.ProfileImageUrlHttps,
 				Name:         tweet.User.Name,
@@ -116,7 +121,8 @@ func t_stream(data map[string]string, keys *apiConfig) {
 				Text:         tweet.Text,
 				Date:         tweet.CreatedAt,
 				RealParty:    data[tweet.User.ScreenName],
-				GuessedParty: out.String(),
+				GuessedPartyTweet:		execPython("predict.py", "\""+tweet.Text+"\""),
+				GuessedPartyAccount:	execPython("predict_account.py", tweet.User.ScreenName),
 			}
 
 			fmt.Println("Raw Struct", msg)
@@ -181,8 +187,13 @@ func main() {
 
 	var config apiConfig
 	configBytes, _ := ioutil.ReadFile("twitter.conf")
+	fmt.Println(configBytes)
 
-	json.Unmarshal(configBytes, &config)
+	err := json.Unmarshal(configBytes, &config)
+	if err != nil {
+		fmt.Println("Err JSON Marshal", err)
+	}
+
 	go t_stream(data, &config)
 	http.HandleFunc("/", echo)
 	address := "0.0.0.0:8001"
