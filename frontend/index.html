@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <link rel="stylesheet" type="text/css" href="css/animate.css">
 	<link rel="stylesheet" type="text/css" href="./css/predict.css">
+	<link rel="stylesheet" type="text/css" href="./css/switch.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   </head>
@@ -47,8 +48,15 @@
     </section>
 
     <section class="sec2" id="main">
+		<div class="switch switch-blue">
+		  <input type="radio" class="switch-input" name="feedselector" value="account" id="feedselector_account" checked>
+		  <label for="feedselector_account" class="switch-label switch-label-off">ACCOUNT</label>
+		  <input type="radio" class="switch-input" name="feedselector" value="tweet" id="feedselector_tweet">
+		  <label for="feedselector_tweet" class="switch-label switch-label-on">TWEET</label>
+		  <span class="switch-selection"></span>
+		</div>
 		<div class="content">
-			<div class="timeline">
+			<div id="timeline" class="timeline">
 			</div>
 		</div>
     </section>
@@ -75,6 +83,12 @@
 </script>
 <!-- End Piwik Code -->
 <script>
+
+
+/////////////////////
+// REQUESTER LOGIC //
+/////////////////////
+
 var requesting = false;
 var bar = "<li><div data-percentage=\"_PER_\" class=\"bar\"></div><span>_NAM_</span></li>";
 var bar_prob = "_PER_";
@@ -126,6 +140,157 @@ $("#requester").submit(function (event)
 		requesting = false;
 		});
 	});
+});
+
+
+/////////////////////
+// TIME LINE LOGIC //
+/////////////////////
+
+String.prototype.replaceAll = function (search, replacement) { //String replace function
+    return this.replace(new RegExp(search, 'g'), replacement);
+};
+
+// Datum richtig formatieren
+function formatDate(d) {
+  return ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
+    d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+
+}
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+
+var livePredictionType = "account"
+function applyPredictionType() {
+    if (livePredictionType=='tweet')
+	{
+		$(".prediction-account:not(.gone)").addClass("gone")
+		$(".prediction-tweet.gone").removeClass("gone")
+	}
+	else
+	{
+		$(".prediction-account.gone").removeClass("gone")
+		$(".prediction-tweet:not(.gone)").addClass("gone")
+	}
+}
+$("#feedselector_account").prop("checked", true)
+$("input[name=feedselector]:radio").change(function () {
+	livePredictionType = $(this).val()
+	applyPredictionType()
+});
+
+tweet_frame = 
+'<div class="tweet">\
+	<img src="__AUTHOR_IMG__" class="tweet-avatar">\
+		<div class="tweet-political-real __PARTY_REAL__" data-toggle="tooltip" title="Fraktion">\
+			__PARTY_REAL__\
+		</div>\
+	<div class="tweet-political-bot prediction-account __PARTY_GUESSED_ACCOUNT__" data-toggle="tooltip" title="Account vorhersage">\
+		__PARTY_GUESSED_ACCOUNT__\
+	</div>\
+	<div class="tweet-political-bot prediction-tweet __PARTY_GUESSED_TWEET__" data-toggle="tooltip" title="Tweet vorhersage">\
+		__PARTY_GUESSED_TWEET__\
+	</div>\
+	<div class="tweet-content">\
+		<h1>__AUTHOR_NAME__</h1>\
+		<h2>@__AUTHOR_HANDLE__</h2>\
+		<p>__TEXT__</p>\
+		<p class="timestamp">__TIME__</p>\
+	</div>\
+</div>'
+tweet_text			= "__TEXT__"
+tweet_time			= "__TIME__"
+tweet_party_real	= "__PARTY_REAL__"
+tweet_author_img	= "__AUTHOR_IMG__"
+tweet_author_name	= "__AUTHOR_NAME__"
+tweet_author_handle	= "__AUTHOR_HANDLE__"
+tweet_party_guessed_tweet	= "__PARTY_GUESSED_TWEET__"
+tweet_party_guessed_account	= "__PARTY_GUESSED_ACCOUNT__"
+
+// Main function
+$(document).ready(function () {
+  t = document.getElementById('timeline')
+
+  // Web Socket
+  var ws = new WebSocket("wss://styx.me:8010");
+
+  // Connection bestätigung
+  ws.onopen = function(){
+    console.log("Socket has been opened!");
+  };
+  
+  ws.onclose = function(e){
+    console.log("Socket connection lost!");
+  };
+  ws.onerror = function(e){
+    console.log("Socket failed!");
+  };
+  
+  // Nachrichten anzeigen
+  ws.onmessage = function(message) {
+    message = JSON.parse(message.data);
+    console.log("Received live tweet!");
+
+    var account_json = message["guessed_party:account"]
+    account_obj = JSON.parse(account_json)
+    var account_highest = ""
+    var account_highest_val = 0.0
+    for (var key in account_obj)
+		if (account_obj[key] > account_highest_val)
+		{
+			account_highest_val = account_obj[key]
+			account_highest = key
+		}
+
+    account_guessed = account_highest.replace("Die Linke", "linke")
+									.replace(new RegExp("B.*90.*", "gm"), "b90")
+									.replace("fraktionslos", "erica")
+
+    var tweet_json = message["guessed_party:tweet"]
+    tweet_obj = JSON.parse(tweet_json)
+    var tweet_highest = ""
+    var tweet_highest_val = 0.0
+    for (var key in tweet_obj)
+		if (tweet_obj[key] > tweet_highest_val)
+		{
+			tweet_highest_val = tweet_obj[key]
+			tweet_highest = key
+		}
+
+    tweet_guessed = tweet_highest.replace("Die Linke", "linke")
+								.replace(new RegExp("B.*90.*", "gm"), "b90")
+								.replace("fraktionslos", "erica")
+
+    var tweet = tweet_frame.replaceAll(tweet_text, message["text"])
+						   .replaceAll(tweet_time, formatDate(new Date(message["date"])))
+						   .replaceAll(tweet_party_real, message["real_party"])
+						   .replaceAll(tweet_party_guessed_tweet, tweet_guessed)
+						   .replaceAll(tweet_party_guessed_account, account_guessed)
+						   .replaceAll(tweet_author_img, message["profile_img"])
+						   .replaceAll(tweet_author_name, message["name"])
+						   .replaceAll(tweet_author_handle, message["handle"])
+
+    $(tweet).prependTo($(".timeline")).hide().show("drop", 500);
+	applyPredictionType()
+  };
+});
+
+// smooth scroll
+$(function() {
+  $('a[href*="#"]:not([href="#"])').click(function() {
+    if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
+      var target = $(this.hash);
+      target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
+      if (target.length) {
+        $('html, body').animate({
+          scrollTop: target.offset().top
+        }, 1000);
+        return false;
+      }
+    }
+  });
 });
 </script>
   </body>
