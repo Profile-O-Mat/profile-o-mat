@@ -6,4 +6,4 @@ Give us your Twitter name, and we'll tell you who to vote for! (Or at least whic
 ### Getting started
 
 You can find our dependencies as well as the installation instructions [here](INSTALL.md).
-If you just want to play with a trained ANN visit profile-o-mat.de.
+If you just want to play with a trained ANN visit [profile-o-mat.de](https://profile-o-mat.de/).
