@@ -7,7 +7,10 @@ import json
 from twitter import *
 import predict
 
-api = Twitter(auth=OAuth(os.environ['ACCESS_TOKEN_KEY'], os.environ['ACCESS_TOKEN_SECRET'], os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']))
+with open("twitter.conf") as data_file:
+	data = json.load(data_file)
+
+api = Twitter(auth=OAuth(data['accessTokenKey'], data['accessTokenSecret'], data['consumerKey'], data['consumerSecret']))
 
 def predict_party(twitter_handle):
     #logger_pdca.debug("Predicting " + twitter_handle)
@@ -29,4 +32,4 @@ def predict_party(twitter_handle):
 
 
 if __name__ == '__main__':
-    print(predict_party(sys.argv[1]))
+    print(json.dumps(predict_party(sys.argv[1])))

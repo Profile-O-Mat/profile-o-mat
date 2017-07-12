@@ -26,7 +26,7 @@ $(function() {
   ws.onmessage = function(message) {
     message = JSON.parse(message.data);
     console.log(message);
-    var phret = message["guessed_party"]
+    var phret = message["guessed_party:account"]
     guessment = JSON.parse(phret)
     console.log(guessment)
     var lastFac = ""
