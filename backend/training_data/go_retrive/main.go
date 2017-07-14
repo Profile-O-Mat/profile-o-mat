@@ -2,18 +2,21 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
+	"sync"
+
+	"time"
+
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"io/ioutil"
-	"sync"
 )
 
 func tweetLookup(c *twitter.Client, wg *sync.WaitGroup, u string, p string, sId int64) {
 	wg.Add(1)
 
 	var timeLineVar twitter.UserTimelineParams
-	if sId == 0	{
+	if sId == 0 {
 		timeLineVar = twitter.UserTimelineParams{
 			ScreenName:      u,
 			ExcludeReplies:  twitter.Bool(true),
@@ -26,19 +29,28 @@ func tweetLookup(c *twitter.Client, wg *sync.WaitGroup, u string, p string, sId 
 			ExcludeReplies:  twitter.Bool(true),
 			IncludeRetweets: twitter.Bool(false),
 			Count:           200,
-			SinceID:		 sId,
+			MaxID:           sId,
 		}
 	}
-	user, _, _ := c.Timelines.UserTimeline(&timeLineVar)
-	for t := range user {
-		ioutil.WriteFile("partys/"+p+"/"+u+"/"+user[t].IDStr+".TXT", []byte(user[t].Text), 0755)
-	}
-	if len(user) > 0 {
-		fmt.Println(u + "\t\t=>", len(user), "\t\t->", user[len(user)-1].ID)
-		go tweetLookup(c, wg, u, p, user[len(user)-1].ID)
+	user, err, _ := c.Timelines.UserTimeline(&timeLineVar)
+	if err.StatusCode == 429 { //Too many requests
+		fmt.Println(u + "\t\t[429]")
+		time.Sleep(time.Second * 180) //Wait 180 sec.
+		go tweetLookup(c, wg, u, p, sId)
+	} else if err.StatusCode == 200 {
+		for t := range user {
+			ioutil.WriteFile("partys/"+p+"/"+u+"/"+user[t].IDStr+".TXT", []byte(user[t].Text), 0755)
+		}
+		if len(user) > 0 {
+			fmt.Println(u+"\t\t=>", len(user), "\t\t->", user[len(user)-1].ID)
+			go tweetLookup(c, wg, u, p, user[len(user)-1].ID)
+		} else {
+			fmt.Println(u+"\t\t=>", len(user), "\t\t->")
+		}
 	} else {
-		fmt.Println(u + "\t\t=>", len(user), "\t\t->")
+		fmt.Println("Unknown code: ", err.StatusCode)
 	}
+
 	wg.Done()
 }
 
