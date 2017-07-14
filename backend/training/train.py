@@ -2,6 +2,9 @@
 ### Visualization ###
 #####################
 import itertools
+import matplotlib as mpl
+mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
@@ -46,11 +49,11 @@ import numpy as np
 import random
 import os
 
-DATA_SIZE = 30000
-L2_PENALTY = 5e-4
+DATA_SIZE = 200000
+L2_PENALTY = 1e-3
 LEARNING_RATE_INIT = 1e-3
 ITERATIONS = 500
-LAYER = (500, 500, 500)
+LAYER = (1000, 500, 500)
 SOLVER = "adam" # adam and lbfgs are recommended
 TEST_SIZE = 1/3
 
