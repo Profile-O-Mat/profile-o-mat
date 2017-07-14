@@ -7,6 +7,6 @@ python3 load_bios.py
 python3 get_accounts_from_twde_list.py
 python3 get_afd_kandidaten.py
 python3 get_piraten_kandidaten.py
-./golang_retrive_tweets 
+go run go_retrive.go
 amnt=$(ls -R -asl | grep .TXT | wc -l)
 echo Read $amnt tweets!
